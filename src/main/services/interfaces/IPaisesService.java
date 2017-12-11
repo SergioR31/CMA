@@ -12,7 +12,8 @@ import main.vo.PaisVO;
 public interface IPaisesService {
 	public ArrayList<PaisVO> listarPaises ();
 	public ArrayList<PaisVO> consultarPaises ();
-
+	public PaisVO consultarPais(int id);
 	public String insertarPais(PaisVO pais);
+	public String actualizarPais(PaisVO pais);
 
 }

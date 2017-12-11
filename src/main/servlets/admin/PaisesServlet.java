@@ -50,6 +50,7 @@ public class PaisesServlet extends HttpServlet {
 		System.out.println("Opcion: " + opcion);
 
 		if (opcion.equals("verPaises")){
+
 			try {
 				verPaises(request, response);
 			}catch(Exception e) {
@@ -68,6 +69,20 @@ public class PaisesServlet extends HttpServlet {
 				insertarPais(request, response);
 			}catch(Exception e) {
 				System.out.println("Error en metodo insertarPais. Mensaje: "+e);
+			}
+		}else if(opcion.equals("modificar")) {
+
+			try {
+				inicioModificarPais(request, response, opcion);
+			}catch(Exception e) {
+				System.out.println("Error en metodo inicioModificarPais. Mensaje: "+e);
+			}
+		}else if(opcion.equals("actualizar")) {
+
+			try {
+				acualizarPais(request, response);
+			}catch(Exception e) {
+				System.out.println("Error en metodo acualizarPais. Mensaje: "+e);
 			}
 		}
 	}
@@ -141,6 +156,62 @@ public class PaisesServlet extends HttpServlet {
 			verPaises(request, response);
 		}
 
+	}
+
+	private void inicioModificarPais(HttpServletRequest request, HttpServletResponse response, String opcion) throws Exception{
+		// TODO Auto-generated method stub
+
+		try {
+
+			request.setAttribute("accion", opcion);
+
+			int id = Integer.parseInt(request.getParameter("id_pais"));
+
+			PaisVO pais = new PaisVO();
+			IPaisesService paisService = new PaisesService();
+
+			pais = paisService.consultarPais(id);
+
+			request.setAttribute("id_pais", id);
+			request.setAttribute("nombre", pais.getNombre());
+
+		} catch (Exception e) {
+			System.out.println("Error en inicioModificarPais de PaisesServlet. Mensaje: " + e);
+		} finally {
+
+			RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/admin/paises/inicioPais.jsp");
+			rd.forward(request, response);
+		}
+
+	}
+
+	private void acualizarPais(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		// TODO Auto-generated method stub
+
+		int id = Integer.parseInt(request.getParameter("id_pais"));
+		String nombre = request.getParameter("nombre");
+		String status = "Disponible";
+
+		String respuesta = "";
+
+		PaisVO pais = new PaisVO();
+		IPaisesService paisService = new PaisesService();
+
+		pais.setId(id);
+		pais.setNombre(nombre);
+		pais.setStatus(status);
+
+		try {
+
+			respuesta = paisService.actualizarPais(pais);
+
+			request.setAttribute("respuesta", respuesta);
+
+		} catch (Exception e) {
+			System.out.println("Error en acualizarPais de PaisServlet. Mensaje: " + e);
+		}finally {
+			verPaises(request, response);
+		}
 	}
 
 }

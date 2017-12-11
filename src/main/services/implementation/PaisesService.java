@@ -72,33 +72,31 @@ public class PaisesService implements IPaisesService {
 
 		String respuesta ="";
 
-		int id_encontrado = 0;
+		int idEncontrado = 0;
 
 		try {
 
-			listaPaises = consultarPaises();
+			listaPaises = paisesDAO.consultarPaises();
 
 			for(int i=0; i<listaPaises.size();i++) {
 				if(listaPaises.get(i).getNombre().equalsIgnoreCase(pais.getNombre())) {
-					realizarInsert = false;
-					System.out.println("Pais a insertar: " + pais.getNombre() + " || Pais en DB: " + listaPaises.get(i).getNombre());
 
-					id_encontrado = listaPaises.get(i).getId();
-					System.out.println("id Programa en DB: " + id_encontrado);
+					realizarInsert = false;
+
+					idEncontrado = listaPaises.get(i).getId();
 				}
 			}
 
-			if (realizarInsert == true) {
+			if (realizarInsert) {
 
 				respuesta = paisesDAO.insertarPais(pais);
 
 			}else {
-				System.out.println("Pais ya existe");
+
 				String status = "Disponible";
 				pais.setStatus(status);
-				pais.setId(id_encontrado);
-				respuesta = "Pais ya existe";
-				//				respuesta = actualizarPrograma(programa);
+				pais.setId(idEncontrado);
+				respuesta = actualizarPais(pais);
 			}
 		} catch (Exception e) {
 			System.out.println("Error en insertarPais de PaisesService. Mensaje: "+e);
@@ -106,5 +104,69 @@ public class PaisesService implements IPaisesService {
 		return respuesta;
 	}
 
+	@Override
+	public PaisVO consultarPais(int id) {
+		// TODO Auto-generated method stub
+
+		PaisVO pais = new PaisVO();
+
+		IPaisesDAO paisDAO = new PaisesDAO();
+
+		pais = paisDAO.consultarPais(id);
+
+		return pais;
+	}
+
+	@Override
+	public String actualizarPais(PaisVO pais) {
+		// TODO Auto-generated method stub
+
+		ArrayList<PaisVO> listaPaises = new ArrayList<PaisVO>();
+
+		String respuesta = "";
+
+		IPaisesDAO paisDAO = new PaisesDAO();
+
+		boolean realizarUpdate= true;
+
+		int idEncontrado = 0;
+
+		try {
+
+			listaPaises = paisDAO.consultarPaises();
+
+			for(int i=0; i<listaPaises.size();i++) {
+				if(listaPaises.get(i).getNombre().equalsIgnoreCase(pais.getNombre())) {
+
+					idEncontrado = listaPaises.get(i).getId();
+
+					realizarUpdate = false;
+
+					respuesta = "Pais ya existe.";
+
+					if(pais.getId() == (idEncontrado)) {
+						if(listaPaises.get(i).getStatus().equals("Eliminado")) {
+
+							realizarUpdate = true;
+
+							respuesta = "Pais ya existe. Actualizando estado a Disponible... ";
+						}
+					}
+				}
+			}
+
+			if (realizarUpdate) {
+
+				respuesta += paisDAO.actualizarPais(pais);
+
+			}
+
+
+		} catch (Exception e) {
+			System.out.println("Error en actualizarPais de PaisesService. Mensaje: " + e);
+		}
+
+		return respuesta;
+	}
 
 }

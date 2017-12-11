@@ -63,18 +63,18 @@
 													<c:if test="${not empty listaPaises}">
 														<c:forEach items="${listaPaises}" var="pais">
 															<tr role="row">
-																<td class="sorting_1" style="text-align:center;">${pais.nombre }</td>
+																<td class="sorting_1" style="line-height:30px;">${pais.nombre }</td>
 																
 																<td style="width:10%">
-																	<form action = "<%=request.getContextPath()%>/pais">
+																	<form action = "<%=request.getContextPath()%>/admin/pais">
 																		<input type="hidden" name="opcion" value="modificar">
-																		<button name="nombre_pais" class="btn btn-warning" value=${pais.id }>Modificar</button>
+																		<button name="id_pais" class="btn btn-warning" value=${pais.id }>Modificar</button>
 																	</form>	
 																</td>
 																<td style="width:10%">
 																	<form>
 																		<input type="hidden" name="opcion" value="eliminar">
-																		<button onclick="if (confirm('Seguro que quieres eliminar el pais ${pais.nombre }?')) { form.action = '<%=request.getContextPath()%>/pais'; } else { return false; }" name="id_pais" class="btn btn-danger" value=${pais.id }>Eliminar</button>
+																		<button onclick="if (confirm('Seguro que quieres eliminar el pais ${pais.nombre }?')) { form.action = '<%=request.getContextPath()%>/admin/pais'; } else { return false; }" name="id_pais" class="btn btn-danger" value=${pais.id }>Eliminar</button>
 																	</form>
 																</td>
 															</tr>
