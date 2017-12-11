@@ -9,11 +9,11 @@
 			<li><div class="left-bg"></div></li>
 				
 			<li id="menu-inicio" class="ripple">
-				<a href=""><span class="fa-home fa"></span>Inicio</a>
+				<a href="<%=request.getContextPath()%>/admin/inicio"><span class="fa-home fa"></span>Inicio</a>
 			</li>
 
 			<li id="menu-paises" class="ripple">
-				<a href=""><span class="fa-map fa"></span>Paises</a>
+				<a href="<%=request.getContextPath()%>/admin/paises?opcion=verPaises"><span class="fa-map fa"></span>Paises</a>
 			</li>
 
 			<li id="menu-ciudades" class="ripple">

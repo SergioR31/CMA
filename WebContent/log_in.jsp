@@ -11,13 +11,13 @@
 	<% if (request.isUserInRole("ADMINISTRADOR"))
 	{
 	%>
-	<%response.sendRedirect("pages/admin/home.jsp");%>
+	<%response.sendRedirect("admin/inicio");%>
 	<% } %>
 	
 	<% if (request.isUserInRole("COMERCIAL"))
 	{
 	%>
-	<%response.sendRedirect("pages/comercial/home.jsp");%>
+	<%response.sendRedirect("comercial/inicio");%>
 	<% } %>
 
 </body>

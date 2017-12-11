@@ -9,11 +9,11 @@
 			<ul class="nav navbar-nav navbar-right user-nav">
 				<li class="user-name" style="padding-top: 5px">
                 	<span>${pageContext.request.userPrincipal.name}</span>
-                	<a href="../../index.jsp" style="padding:0; text-align: right">Cerrar Sesion</a>
+                	<a href="../index.jsp" style="padding:0; text-align: right">Cerrar Sesion</a>
                 </li>
 					
 				<li class="dropdown avatar-dropdown">
-					<img src="../../asset/img/avatar.jpg" class="img-circle avatar" alt="user name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"/>
+					<img src="../asset/img/avatar.jpg" class="img-circle avatar" alt="user name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"/>
 				</li>
 			</ul>
 		</div>
