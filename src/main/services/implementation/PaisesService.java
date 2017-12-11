@@ -60,4 +60,51 @@ public class PaisesService implements IPaisesService {
 
 	}
 
+	@Override
+	public String insertarPais(PaisVO pais) {
+		// TODO Auto-generated method stub
+
+		ArrayList<PaisVO> listaPaises = new ArrayList<PaisVO>();
+
+		IPaisesDAO paisesDAO = new PaisesDAO();
+
+		boolean realizarInsert = true;
+
+		String respuesta ="";
+
+		int id_encontrado = 0;
+
+		try {
+
+			listaPaises = consultarPaises();
+
+			for(int i=0; i<listaPaises.size();i++) {
+				if(listaPaises.get(i).getNombre().equalsIgnoreCase(pais.getNombre())) {
+					realizarInsert = false;
+					System.out.println("Pais a insertar: " + pais.getNombre() + " || Pais en DB: " + listaPaises.get(i).getNombre());
+
+					id_encontrado = listaPaises.get(i).getId();
+					System.out.println("id Programa en DB: " + id_encontrado);
+				}
+			}
+
+			if (realizarInsert == true) {
+
+				respuesta = paisesDAO.insertarPais(pais);
+
+			}else {
+				System.out.println("Pais ya existe");
+				String status = "Disponible";
+				pais.setStatus(status);
+				pais.setId(id_encontrado);
+				respuesta = "Pais ya existe";
+				//				respuesta = actualizarPrograma(programa);
+			}
+		} catch (Exception e) {
+			System.out.println("Error en insertarPais de PaisesService. Mensaje: "+e);
+		}
+		return respuesta;
+	}
+
+
 }

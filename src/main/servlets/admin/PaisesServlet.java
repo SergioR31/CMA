@@ -55,16 +55,31 @@ public class PaisesServlet extends HttpServlet {
 			}catch(Exception e) {
 				System.out.println("Error en metodo verPaises. Mensaje: "+e);
 			}
+		}else if(opcion.equals("crear")){
+
+			try {
+				inicioCrearPais(request, response, opcion);
+			}catch(Exception e) {
+				System.out.println("Error en metodo inicioCrearPais. Mensaje: "+e);
+			}
+		}else if(opcion.equals("insertar")) {
+
+			try {
+				insertarPais(request, response);
+			}catch(Exception e) {
+				System.out.println("Error en metodo insertarPais. Mensaje: "+e);
+			}
 		}
 	}
 
 	private void verPaises(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// TODO Auto-generated method stub
+
+		ArrayList<PaisVO> listaPaises = new ArrayList<PaisVO>();
+
+		IPaisesService paisesService = new PaisesService();
+
 		try {
-
-			ArrayList<PaisVO> listaPaises = new ArrayList<PaisVO>();
-
-			IPaisesService paisesService = new PaisesService();
 
 			listaPaises = paisesService.listarPaises();
 
@@ -79,7 +94,53 @@ public class PaisesServlet extends HttpServlet {
 
 			RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/admin/paises/listaPaises.jsp");
 			rd.forward(request, response);
+
 		}
+	}
+
+	private void inicioCrearPais(HttpServletRequest request, HttpServletResponse response, String opcion) throws Exception {
+		// TODO Auto-generated method stub
+
+		try {
+
+			request.setAttribute("accion",opcion);
+
+		}catch(Exception e) {
+
+			System.out.println("Error en inicioCrearPais de PaisServlet. Mensaje: " + e);
+
+		}finally {
+
+			RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/admin/paises/inicioPais.jsp");
+			rd.forward(request, response);
+
+		}
+	}
+
+	private void insertarPais(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// TODO Auto-generated method stub
+
+		String nombre = request.getParameter("nombre");
+		String status = "Disponible";
+		String respuesta = "";
+
+		PaisVO pais = new PaisVO();
+		IPaisesService paisService = new PaisesService();
+
+		pais.setNombre(nombre);
+		pais.setStatus(status);
+
+		try {
+
+			respuesta = paisService.insertarPais(pais);
+			request.setAttribute("respuesta", respuesta);
+
+		} catch (Exception e) {
+			System.out.println("Error en insertarPais de PaisServlet. Mesaje: " + e);
+		}finally {
+			verPaises(request, response);
+		}
+
 	}
 
 }

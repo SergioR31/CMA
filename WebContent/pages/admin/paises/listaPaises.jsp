@@ -10,9 +10,10 @@
 	<c:import url="/fragments/metaLinks.jsp"></c:import>
 	
 	<title>Lista Paises</title>
+	
 </head>
 
-<body>
+<body id="mimin" class="dashboard">
  
 	<c:import url="/fragments/nav.jsp"/>
 	
@@ -34,7 +35,7 @@
 					<div class="panel">
 						<div class="panel-heading">
 							<div style="position:absolute; right:30px">
-								<form action = "<%=request.getContextPath()%>/curso">
+								<form action = "<%=request.getContextPath()%>/admin/pais">
 									<input type="hidden" name="opcion" value="crear">
 									<button class="btn btn-success">Crear Pais</button>
 								</form>
@@ -47,7 +48,7 @@
 								<div id="datatables-example_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 									<div class="row">
 										<div class="col-sm-12">
-											<table id="datatables-example" class="table table-striped table-bordered dataTable no-footer" width="100%" cellspacing="0" role="grid" aria-describedby="datatables-example_info" style="width: 100%;">
+											<table id="datatables-example" class="table table-striped table-bordered dataTable no-footer" role="grid" aria-describedby="datatables-example_info" style="width: 100%;">
 												<thead>
 													<tr role="row">
 														<th class="sorting_asc" tabindex="0" aria-controls="datatables-example" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Nombre: activate to sort column descending" style="width: 93px; text-align:center;">
@@ -97,7 +98,13 @@
 <script type="text/javascript">
 window.onload = function(){
     var activarMenu = 'menu-paises';
+    var respuesta = '${respuesta}';
+    
     document.getElementById(activarMenu).className = 'active ripple';
+    
+    if (respuesta != null && respuesta != ""){
+		alert(respuesta);
+	}
 };
 </script>
 

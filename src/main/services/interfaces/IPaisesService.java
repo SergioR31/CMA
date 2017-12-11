@@ -13,4 +13,6 @@ public interface IPaisesService {
 	public ArrayList<PaisVO> listarPaises ();
 	public ArrayList<PaisVO> consultarPaises ();
 
+	public String insertarPais(PaisVO pais);
+
 }
