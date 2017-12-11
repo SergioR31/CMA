@@ -3,6 +3,7 @@ package main.vo;
 public class PaisVO {
 	private int id;
 	private String nombre;
+	private String status;
 	/**
 	 * @return the id
 	 */
@@ -26,6 +27,18 @@ public class PaisVO {
 	 */
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
-	} 
-	
+	}
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 }
