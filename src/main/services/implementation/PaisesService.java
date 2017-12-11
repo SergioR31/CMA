@@ -1,6 +1,7 @@
 package main.services.implementation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import main.dao.implementation.PaisesDAO;
 import main.dao.interfaces.IPaisesDAO;
@@ -17,15 +18,19 @@ public class PaisesService implements IPaisesService {
 
 		IPaisesDAO paisesDAO = new PaisesDAO();
 
+		Collection<PaisVO> paisesNoMostrar = new ArrayList<PaisVO>();
+
 		try {
 
 			listaPaises = paisesDAO.consultarPaises();
 
 			for (int i = 0; i<listaPaises.size(); i++) {
 				if(listaPaises.get(i).getStatus().equals("Eliminado") || listaPaises.get(i).getStatus().equals("Inactivo")) {
-					listaPaises.remove(i);
+					paisesNoMostrar.add(listaPaises.get(i));
 				}
 			}
+
+			listaPaises.removeAll(paisesNoMostrar);
 
 		} catch (Exception e) {
 			System.out.println("Error en listarPaises de PaisService. Mensaje: "+e);
@@ -164,6 +169,25 @@ public class PaisesService implements IPaisesService {
 
 		} catch (Exception e) {
 			System.out.println("Error en actualizarPais de PaisesService. Mensaje: " + e);
+		}
+
+		return respuesta;
+	}
+
+	@Override
+	public String eliminarPais(PaisVO pais) {
+		// TODO Auto-generated method stub
+
+		String respuesta ="";
+
+		IPaisesDAO paisDAO = new PaisesDAO();
+
+		try {
+
+			respuesta = paisDAO.eliminarPais(pais);
+
+		}catch(Exception e) {
+			System.out.println("Error en eliminarPais de PaisesService. Mensaje: "+e);
 		}
 
 		return respuesta;

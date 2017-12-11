@@ -84,6 +84,14 @@ public class PaisesServlet extends HttpServlet {
 			}catch(Exception e) {
 				System.out.println("Error en metodo acualizarPais. Mensaje: "+e);
 			}
+		}else if(opcion.equals("eliminar")) {
+
+			try {
+				eliminarPais(request, response);
+
+			}catch(Exception e) {
+				System.out.println("Error en metodo eliminarPais. Mensaje: "+e);
+			}
 		}
 	}
 
@@ -122,7 +130,7 @@ public class PaisesServlet extends HttpServlet {
 
 		}catch(Exception e) {
 
-			System.out.println("Error en inicioCrearPais de PaisServlet. Mensaje: " + e);
+			System.out.println("Error en inicioCrearPais de PaisesServlet. Mensaje: " + e);
 
 		}finally {
 
@@ -151,7 +159,7 @@ public class PaisesServlet extends HttpServlet {
 			request.setAttribute("respuesta", respuesta);
 
 		} catch (Exception e) {
-			System.out.println("Error en insertarPais de PaisServlet. Mesaje: " + e);
+			System.out.println("Error en insertarPais de PaisesServlet. Mesaje: " + e);
 		}finally {
 			verPaises(request, response);
 		}
@@ -208,7 +216,34 @@ public class PaisesServlet extends HttpServlet {
 			request.setAttribute("respuesta", respuesta);
 
 		} catch (Exception e) {
-			System.out.println("Error en acualizarPais de PaisServlet. Mensaje: " + e);
+			System.out.println("Error en acualizarPais de PaisesServlet. Mensaje: " + e);
+		}finally {
+			verPaises(request, response);
+		}
+	}
+
+	private void eliminarPais(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		// TODO Auto-generated method stub
+
+		int id = Integer.parseInt(request.getParameter("id_pais"));
+
+		String status = "Eliminado";
+
+		String respuesta = "";
+
+		PaisVO pais = new PaisVO();
+		IPaisesService paisService = new PaisesService();
+
+		pais.setId(id);
+		pais.setStatus(status);
+
+		try {
+
+			respuesta = paisService.eliminarPais(pais);
+
+			request.setAttribute("respuesta", respuesta);
+		}catch(Exception e) {
+			System.out.println("Error en eliminarPais de PaisesServlet. Mensaje: " + e);
 		}finally {
 			verPaises(request, response);
 		}

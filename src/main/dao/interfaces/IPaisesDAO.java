@@ -14,4 +14,5 @@ public interface IPaisesDAO {
 	public PaisVO consultarPais(int id);
 	public String insertarPais(PaisVO pais);
 	public String actualizarPais(PaisVO pais);
+	public String eliminarPais(PaisVO pais);
 }

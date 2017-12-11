@@ -167,4 +167,39 @@ public class PaisesDAO extends ConexionDAO implements IPaisesDAO {
 
 		return respuesta;
 	}
+
+	@Override
+	public String eliminarPais(PaisVO pais) {
+		// TODO Auto-generated method stub
+
+		String respuesta = "";
+
+		try {
+
+			Connection connection = null;
+			connection = crearConexion(connection);
+
+			String query = "UPDATE PAISES SET STATUS = ? WHERE ID = ?";
+
+			PreparedStatement statement = connection.prepareStatement(query);
+
+			statement.setString(1, pais.getStatus());
+			statement.setInt(2, pais.getId());
+
+			statement.executeUpdate();
+
+			ResultSet resultSet = statement.getResultSet();
+
+			cerrarConexion(resultSet, statement, connection);
+
+			respuesta = "Pais eliminado con exito";
+
+		} catch (Exception e) {
+			System.out.println("Error en eliminarPais en ProgramasDAO. Mensaje :" + e);
+			respuesta = "Error al eliminar pais";
+		}
+
+		return respuesta;
+	}
+
 }
