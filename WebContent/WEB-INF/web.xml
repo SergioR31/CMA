@@ -1,60 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
-  	<display-name>CMA</display-name>
-  
-	<welcome-file-list>
-    	<welcome-file>index.jsp</welcome-file>
-    	<welcome-file>home.jsp</welcome-file>
-  	</welcome-file-list>
-  
-	<resource-ref>
-  		<description>Oracle Data Source</description>
-  		<res-ref-name>jdbc/conexionCMA</res-ref-name>
-    	<res-type>javax.sql.DataSource</res-type>
-    	<res-auth>Container</res-auth>
-  	</resource-ref>
-  	
-	<security-constraint>
-    	<web-resource-collection>
-      		<web-resource-name>Administrator Authentication Policy</web-resource-name>
-      		<url-pattern>/log_in.jsp</url-pattern>
-      		<url-pattern>/pages/admin/*</url-pattern>
-    	</web-resource-collection>
-    	
-    	<auth-constraint>
-      		<role-name>ADMINISTRADOR</role-name>
-    	</auth-constraint>
-  	</security-constraint>
-  	
-	<security-constraint>
-    	<web-resource-collection>
-      		<web-resource-name>User Authentication Policy</web-resource-name>
-      		<url-pattern>/log_in.jsp</url-pattern>
-      		<url-pattern>/pages/comercial/*</url-pattern>
-    	</web-resource-collection>
-    	
-    	<auth-constraint>
-			<role-name>COMERCIAL</role-name>
-		</auth-constraint>
-	</security-constraint>
-
-	<security-role>
-    	<description>Administrator User</description>
-    	<role-name>ADMINISTRADOR</role-name>
-  	</security-role>
-  	
-  	<security-role>
-    	<description>Commercial User</description>
-    	<role-name>COMERCIAL</role-name>
-  	</security-role>
-  	
-  	<login-config>
-    	<auth-method>FORM</auth-method>
-    	<realm-name>Form-Based Authentication Area</realm-name>
-    	<form-login-config>
-      		<form-login-page>/login.jsp</form-login-page>
-      		<form-error-page>/loginError.jsp</form-error-page>
-    	</form-login-config>
-  	</login-config>
-  
+  <display-name>CMA</display-name>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>home.jsp</welcome-file>
+  </welcome-file-list>
+  <resource-ref>
+    <description>Oracle Data Source</description>
+    <res-ref-name>jdbc/conexionCMA</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+  </resource-ref>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Administrator Authentication Policy</web-resource-name>
+      <url-pattern>/log_in.jsp</url-pattern>
+      <url-pattern>/pages/admin/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>ADMINISTRADOR</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>User Authentication Policy</web-resource-name>
+      <url-pattern>/log_in.jsp</url-pattern>
+      <url-pattern>/pages/comercial/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>COMERCIAL</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <security-role>
+    <description>Administrator User</description>
+    <role-name>ADMINISTRADOR</role-name>
+  </security-role>
+  <security-role>
+    <description>Commercial User</description>
+    <role-name>COMERCIAL</role-name>
+  </security-role>
+  <login-config>
+    <auth-method>FORM</auth-method>
+    <realm-name>Form-Based Authentication Area</realm-name>
+    <form-login-config>
+      <form-login-page>/login.jsp</form-login-page>
+      <form-error-page>/loginError.jsp</form-error-page>
+    </form-login-config>
+  </login-config>
 </web-app>
