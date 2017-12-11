@@ -8,31 +8,31 @@
 		<ul class="nav nav-list">
 			<li><div class="left-bg"></div></li>
 				
-			<li class="ripple">
+			<li id="menu-inicio" class="ripple">
 				<a href=""><span class="fa-home fa"></span>Inicio</a>
 			</li>
 
-			<li class="ripple">
+			<li id="menu-paises" class="ripple">
 				<a href=""><span class="fa-map fa"></span>Paises</a>
 			</li>
 
-			<li class="ripple">
+			<li id="menu-ciudades" class="ripple">
 				<a href=""><span class="fa-map-pin fa"></span>Ciudades</a>
 			</li>
 
-			<li class="ripple">
+			<li id="menu-lugares" class="ripple">
 				<a href=""><span class="fa-map-signs fa"></span>Lugares</a>
 			</li>
 			
-			<li class="ripple">
+			<li id="menu-cursos" class="ripple">
 				<a href=""><span class="fa-book fa"></span>Cursos</a>
 			</li>
 
-			<li class="ripple">
+			<li id="menu-programas" class="ripple">
 				<a href=""><span class="fa-graduation-cap fa"></span>Programas</a>
 			</li>
                     
-			<li class="ripple">
+			<li id="menu-instructores" class="ripple">
 				<a href=""><span class="fa-user fa"></span>Instructores</a>
 			</li>
 			

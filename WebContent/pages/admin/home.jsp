@@ -4,16 +4,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<c:import url="/metaLinks.jsp"></c:import>
+	<c:import url="/fragments/metaLinks.jsp"></c:import>
 	
 	<title>Home Admininstrador</title>
 </head>
 	
 <body>
 		
-	<c:import url="/nav.jsp"/>
+	<c:import url="/fragments/nav.jsp"/>
 	
-	<c:import url="/leftMenuAdmin.jsp"/>
+	<c:import url="/fragments/leftMenuAdmin.jsp"/>
 		
 	<div class="container-fluid mimin-wrapper">
 		<div id="content">
@@ -34,6 +34,12 @@
 
 </body>
 	
-<c:import url="/scripts.jsp"/>
+<c:import url="/fragments/scripts.jsp"/>
+<script type="text/javascript">
+window.onload = function(){
+    var activarMenu = 'menu-inicio';
+    document.getElementById(activarMenu).className = 'active ripple';
+};
+</script>
 
 </html>
