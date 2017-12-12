@@ -1,6 +1,8 @@
 package main.servlets.admin;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,53 +12,60 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class InicioServlet
+ * Servlet implementation class InicioServlet.
  */
 @WebServlet("/InicioServlet")
 public class InicioServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public InicioServlet() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    /**
+    *
+    */
+    private static final Logger LOGGER = Logger.getLogger("main.servlets.InicioServlet");
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doPost(request, response);
-	}
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public InicioServlet() {
+        super();
+    }
 
-		System.out.println("Usuario es admin?:"+request.isUserInRole("ADMINISTRADOR"));
-		System.out.println("Usuario es comercial?:"+request.isUserInRole("COMERCIAL"));
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    @Override
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
+        doPost(request, response);
+    }
 
-		if(request.isUserInRole("ADMINISTRADOR")) {
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    @Override
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
 
-			RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/admin/home.jsp");
-			rd.forward(request, response);
+        LOGGER.log(Level.INFO, "Usuario es admin?:" + request.isUserInRole("ADMINISTRADOR"));
+        LOGGER.log(Level.INFO, "Usuario es comercial?:" + request.isUserInRole("COMERCIAL"));
 
-		}
+        if (request.isUserInRole("ADMINISTRADOR")) {
 
-		if(request.isUserInRole("COMERCIAL")) {
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/admin/home.jsp");
+            rd.forward(request, response);
 
-			RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/comercial/home.jsp");
-			rd.forward(request, response);
+        }
 
-		}
+        if (request.isUserInRole("COMERCIAL")) {
 
-	}
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/comercial/home.jsp");
+            rd.forward(request, response);
+
+        }
+
+    }
 
 }

@@ -3,203 +3,247 @@ package main.dao.implementation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import main.dao.interfaces.IPaisesDAO;
 import main.utils.ConexionDAO;
 import main.vo.PaisVO;
 
+/**
+ *
+ * @author Sergio Ramos
+ *
+ */
 public class PaisesDAO extends ConexionDAO implements IPaisesDAO {
 
-	@Override
-	public ArrayList<PaisVO> consultarPaises() {
-		// TODO Auto-generated method stub
+    /**
+     *
+     */
+    private static final Logger LOGGER = Logger.getLogger("main.dao.implementation.PaisesDAO");
 
-		ArrayList<PaisVO> listaPaises = new ArrayList<PaisVO>();
+    @Override
+    public final ArrayList<PaisVO> consultarPaises() throws Exception {
 
-		String query = "SELECT * FROM PAISES ORDER BY NOMBRE ASC";
+        ArrayList<PaisVO> listaPaises = new ArrayList<>();
 
-		try {
+        String query = "SELECT * FROM PAISES ORDER BY NOMBRE ASC";
 
-			Connection connection = null;
-			connection = crearConexion(connection);
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
 
-			Statement statement = connection.createStatement();
+        try {
 
-			statement.execute(query);
+            connection = crearConexion();
 
-			ResultSet resultSet = statement.getResultSet();
+            statement = connection.createStatement();
 
-			while(resultSet.next()) {
+            statement.execute(query);
 
-				PaisVO paisVO = new PaisVO();
+            resultSet = statement.getResultSet();
 
-				paisVO.setId(resultSet.getInt("ID"));
-				paisVO.setNombre(resultSet.getString("NOMBRE"));
-				paisVO.setStatus(resultSet.getString("STATUS"));
+            while (resultSet.next()) {
 
-				listaPaises.add(paisVO);
-			}
+                PaisVO paisVO = new PaisVO();
 
-			cerrarConexion(resultSet, statement, connection);
+                paisVO.setId(resultSet.getInt("ID"));
+                paisVO.setNombre(resultSet.getString("NOMBRE"));
+                paisVO.setStatus(resultSet.getString("STATUS"));
 
-		} catch (Exception e) {
+                listaPaises.add(paisVO);
+            }
 
-			System.out.println("Error en consultarPaises de PaisesDAO. Mensaje: " + e);
+        } catch (Exception e) {
 
-		}
+            LOGGER.log(Level.SEVERE, "Error consultarPaises PaisesDAO: " + e);
 
-		return listaPaises;
-	}
+        } finally {
 
-	@Override
-	public String insertarPais(PaisVO pais) {
-		// TODO Auto-generated method stub
+            cerrarConexion(resultSet, statement, connection);
+        }
 
-		String queryId = "SELECT id_pai_seq.nextval AS nextId FROM DUAL";
+        return listaPaises;
+    }
 
-		String respuesta = "";
+    @Override
+    public final String insertarPais(final PaisVO pais) throws SQLException {
 
-		try {
+        String queryId = "SELECT id_pai_seq.nextval AS nextId FROM DUAL";
 
-			Connection connection = null;
-			connection = crearConexion(connection);
+        String query = "INSERT INTO PAISES VALUES(?, ?, ?)";
+        // ID, NOMBRE
 
-			Statement stId = connection.createStatement();
+        String respuesta = "";
 
-			stId.executeQuery(queryId);
+        Connection connection = null;
+        Statement stId = null;
+        ResultSet rsId = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
 
-			ResultSet rsId = stId.getResultSet();
-			rsId.next();
-			int id = rsId.getInt("nextId");
+        try {
 
-			String query = "INSERT INTO PAISES VALUES(?, ?, ?)";
-			//ID, NOMBRE
+            connection = crearConexion();
 
-			PreparedStatement statement = connection.prepareStatement(query);
+            stId = connection.createStatement();
 
-			statement.setInt(1, id);
-			statement.setString(2, pais.getNombre());
-			statement.setString(3, pais.getStatus());
+            stId.executeQuery(queryId);
 
-			statement.executeUpdate();
+            rsId = stId.getResultSet();
+            rsId.next();
+            int id = rsId.getInt("nextId");
 
-			ResultSet resultSet = statement.getResultSet();
+            statement = connection.prepareStatement(query);
 
-			cerrarConexion(resultSet, statement, connection);
+            statement.setInt(1, id);
+            statement.setString(2, pais.getNombre());
+            statement.setString(3, pais.getStatus());
 
-			respuesta = "Pais agregado con exito";
-		} catch (Exception e) {
-			System.out.println("Error en insertarPais de PaisesDAO. Mensaje: " + e);
-			respuesta = "Error al agregar Pais";
-		}
+            statement.executeUpdate();
 
-		return respuesta;
-	}
+            resultSet = statement.getResultSet();
 
-	@Override
-	public PaisVO consultarPais(int id) {
-		// TODO Auto-generated method stub
+            respuesta = "Pais agregado con exito";
 
-		PaisVO pais = new PaisVO();
+        } catch (Exception e) {
 
-		String query = "SELECT * FROM PAISES WHERE ID = " + id;
+            LOGGER.log(Level.SEVERE, "Error insertarPais PaisesDAO: " + e);
+            respuesta = "Error al agregar Pais";
 
-		try {
+        } finally {
 
-			Connection connection = null;
-			connection = crearConexion(connection);
+            cerrarConexion(rsId, stId, connection);
+            cerrarConexion(resultSet, statement, connection);
 
-			Statement statement = connection.createStatement();
+        }
 
-			statement.execute(query);
+        return respuesta;
+    }
 
-			ResultSet resultSet = statement.getResultSet();
+    @Override
+    public final PaisVO consultarPais(final int id) throws SQLException {
 
-			resultSet.next();
+        PaisVO pais = new PaisVO();
 
-			pais.setId(resultSet.getInt("ID"));
-			pais.setNombre(resultSet.getString("NOMBRE"));
-			pais.setStatus(resultSet.getString("STATUS"));
+        String query = "SELECT * FROM PAISES WHERE ID = ?";
 
-			cerrarConexion(resultSet, statement, connection);
-		} catch (Exception e) {
-			System.out.println("Error en consultarPais de PaisesDAO. Mensage: "+e);
-		}
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
 
-		return pais;
-	}
+        try {
 
-	@Override
-	public String actualizarPais(PaisVO pais) {
-		// TODO Auto-generated method stub
+            connection = crearConexion();
 
-		String respuesta = "";
+            statement = connection.prepareStatement(query);
 
-		try {
+            statement.setInt(1, id);
 
-			Connection connection = null;
-			connection = crearConexion(connection);
+            statement.executeUpdate();
 
-			String query = "UPDATE PAISES SET NOMBRE = ?, STATUS = ? WHERE ID = ?";
+            resultSet = statement.getResultSet();
 
-			PreparedStatement statement = connection.prepareStatement(query);
+            resultSet.next();
 
-			statement.setString(1, pais.getNombre());
-			statement.setString(2, pais.getStatus());
-			statement.setInt(3, pais.getId());
+            pais.setId(resultSet.getInt("ID"));
+            pais.setNombre(resultSet.getString("NOMBRE"));
+            pais.setStatus(resultSet.getString("STATUS"));
 
-			statement.executeUpdate();
+        } catch (Exception e) {
 
-			ResultSet resultSet = statement.getResultSet();
+            LOGGER.log(Level.SEVERE, "Error consultarPais PaisesDAO: " + e);
 
-			cerrarConexion(resultSet, statement, connection);
+        } finally {
 
-			respuesta = "Pais actualizado con exito";
+            cerrarConexion(resultSet, statement, connection);
 
+        }
 
-		} catch (Exception e) {
+        return pais;
+    }
 
-			System.out.println("Error en actualizarPais en PaisesDAO. Mensaje :" + e);
-			respuesta = "Error al actualizar pais";
-		}
+    @Override
+    public final String actualizarPais(final PaisVO pais) throws SQLException {
 
-		return respuesta;
-	}
+        String query = "UPDATE PAISES SET NOMBRE = ?, STATUS = ? WHERE ID = ?";
 
-	@Override
-	public String eliminarPais(PaisVO pais) {
-		// TODO Auto-generated method stub
+        String respuesta = "";
 
-		String respuesta = "";
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
 
-		try {
+        try {
 
-			Connection connection = null;
-			connection = crearConexion(connection);
+            connection = crearConexion();
 
-			String query = "UPDATE PAISES SET STATUS = ? WHERE ID = ?";
+            statement = connection.prepareStatement(query);
 
-			PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, pais.getNombre());
+            statement.setString(2, pais.getStatus());
+            statement.setInt(3, pais.getId());
 
-			statement.setString(1, pais.getStatus());
-			statement.setInt(2, pais.getId());
+            statement.executeUpdate();
 
-			statement.executeUpdate();
+            resultSet = statement.getResultSet();
 
-			ResultSet resultSet = statement.getResultSet();
+            respuesta = "Pais actualizado con exito";
 
-			cerrarConexion(resultSet, statement, connection);
+        } catch (Exception e) {
 
-			respuesta = "Pais eliminado con exito";
+            LOGGER.log(Level.SEVERE, "Error actualizarPais PaisesDAO:" + e);
+            respuesta = "Error al actualizar pais";
 
-		} catch (Exception e) {
-			System.out.println("Error en eliminarPais en ProgramasDAO. Mensaje :" + e);
-			respuesta = "Error al eliminar pais";
-		}
+        } finally {
 
-		return respuesta;
-	}
+            cerrarConexion(resultSet, statement, connection);
+        }
+
+        return respuesta;
+    }
+
+    @Override
+    public final String eliminarPais(final PaisVO pais) throws SQLException {
+
+        String query = "UPDATE PAISES SET STATUS = ? WHERE ID = ?";
+
+        String respuesta = "";
+
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+
+            connection = crearConexion();
+
+            statement = connection.prepareStatement(query);
+
+            statement.setString(1, pais.getStatus());
+            statement.setInt(2, pais.getId());
+
+            statement.executeUpdate();
+
+            resultSet = statement.getResultSet();
+
+            respuesta = "Pais eliminado con exito";
+
+        } catch (Exception e) {
+
+            LOGGER.log(Level.SEVERE, "Error eliminarPais ProgramasDAO: " + e);
+            respuesta = "Error al eliminar pais";
+
+        } finally {
+
+            cerrarConexion(resultSet, statement, connection);
+
+        }
+
+        return respuesta;
+    }
 
 }

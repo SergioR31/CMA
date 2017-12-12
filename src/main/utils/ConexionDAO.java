@@ -5,10 +5,12 @@ package main.utils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.sun.media.jfxmedia.logging.Logger;
@@ -19,25 +21,47 @@ import com.sun.media.jfxmedia.logging.Logger;
  */
 public class ConexionDAO {
 
-	protected Connection crearConexion(Connection connection) throws Exception{
+    /**
+     *
+     * @return La conxion establecida
+     * @throws NamingException
+     *             Si el nombre no es correcto
+     * @throws SQLException
+     *             Si hay problema con la conexion
+     */
+    protected final Connection crearConexion() throws NamingException, SQLException {
 
-		Context initContex = new InitialContext();
-		Context envContext = (Context) initContex.lookup("java:/comp/env");
+        Connection connection;
 
-		DataSource ds = (DataSource) envContext.lookup("jdbc/conexionCMA");
+        Context initContex = new InitialContext();
+        Context envContext = (Context) initContex.lookup("java:/comp/env");
 
-		connection = ds.getConnection();
+        DataSource ds = (DataSource) envContext.lookup("jdbc/conexionCMA");
 
-		Logger.logMsg(1, "conexion creada");
+        connection = ds.getConnection();
 
-		return connection;
-	}
+        Logger.logMsg(1, "conexion creada");
 
-	protected void cerrarConexion(ResultSet resultSet, Statement statement, Connection connection) throws Exception{
-		if (resultSet != null && statement != null && connection != null) {
-			resultSet.close();
-			statement.close();
-			connection.close();
-		}
-	}
+        return connection;
+    }
+
+    /**
+     *
+     * @param rs
+     *            Indica el ResultSet
+     * @param st
+     *            Indica el Statement
+     * @param conn
+     *            Indica la Conexion
+     * @throws SQLException
+     *             si falla el cierre de conexion
+     */
+    protected final void cerrarConexion(final ResultSet rs, final Statement st, final Connection conn)
+            throws SQLException {
+        if (rs != null && st != null && conn != null) {
+            rs.close();
+            st.close();
+            conn.close();
+        }
+    }
 }

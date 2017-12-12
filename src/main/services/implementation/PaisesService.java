@@ -1,196 +1,207 @@
 package main.services.implementation;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import main.dao.implementation.PaisesDAO;
 import main.dao.interfaces.IPaisesDAO;
 import main.services.interfaces.IPaisesService;
 import main.vo.PaisVO;
 
+/**
+ *
+ * @author Sergio Ramos
+ *
+ */
 public class PaisesService implements IPaisesService {
 
-	@Override
-	public ArrayList<PaisVO> listarPaises() {
-		// TODO Auto-generated method stub
+    /**
+    *
+    */
+    private static final Logger LOGGER = Logger.getLogger("main.dao.implementation.PaisesService");
 
-		ArrayList<PaisVO> listaPaises = new ArrayList<PaisVO>();
+    @Override
+    public final ArrayList<PaisVO> listarPaises() {
 
-		IPaisesDAO paisesDAO = new PaisesDAO();
+        ArrayList<PaisVO> listaPaises = new ArrayList<>();
 
-		Collection<PaisVO> paisesNoMostrar = new ArrayList<PaisVO>();
+        IPaisesDAO paisesDAO = new PaisesDAO();
 
-		try {
+        Collection<PaisVO> paisesNoMostrar = new ArrayList<>();
 
-			listaPaises = paisesDAO.consultarPaises();
+        try {
 
-			for (int i = 0; i<listaPaises.size(); i++) {
-				if(listaPaises.get(i).getStatus().equals("Eliminado") || listaPaises.get(i).getStatus().equals("Inactivo")) {
-					paisesNoMostrar.add(listaPaises.get(i));
-				}
-			}
+            listaPaises = paisesDAO.consultarPaises();
 
-			listaPaises.removeAll(paisesNoMostrar);
+            for (int i = 0; i < listaPaises.size(); i++) {
+                if (listaPaises.get(i).getStatus().equals("Eliminado")
+                        || listaPaises.get(i).getStatus().equals("Inactivo")) {
+                    paisesNoMostrar.add(listaPaises.get(i));
+                }
+            }
 
-		} catch (Exception e) {
-			System.out.println("Error en listarPaises de PaisService. Mensaje: "+e);
-		}
+            listaPaises.removeAll(paisesNoMostrar);
 
-		return listaPaises;
-	}
+        } catch (Exception e) {
 
-	@Override
-	public ArrayList<PaisVO> consultarPaises() {
-		// TODO Auto-generated method stub
+            LOGGER.log(Level.SEVERE, "Error listarPaises PaisService: " + e);
 
-		ArrayList<PaisVO> listaPaises = new ArrayList<PaisVO>();
+        }
 
-		IPaisesDAO paisesDAO = new PaisesDAO();
+        return listaPaises;
+    }
 
-		try {
+    @Override
+    public final ArrayList<PaisVO> consultarPaises() {
 
-			listaPaises = paisesDAO.consultarPaises();
+        ArrayList<PaisVO> listaPaises = new ArrayList<>();
 
-			for (int i = 0; i<listaPaises.size(); i++) {
-				if(listaPaises.get(i).getStatus().equals("Eliminado")) {
-					listaPaises.remove(i);
-				}
-			}
+        IPaisesDAO paisesDAO = new PaisesDAO();
 
-		} catch (Exception e) {
-			System.out.println("Error en consultarPaises de PaisService. Mensaje: "+e);
-		}
+        try {
 
-		return listaPaises;
+            listaPaises = paisesDAO.consultarPaises();
 
-	}
+            for (int i = 0; i < listaPaises.size(); i++) {
+                if (listaPaises.get(i).getStatus().equals("Eliminado")) {
+                    listaPaises.remove(i);
+                }
+            }
 
-	@Override
-	public String insertarPais(PaisVO pais) {
-		// TODO Auto-generated method stub
+        } catch (Exception e) {
 
-		ArrayList<PaisVO> listaPaises = new ArrayList<PaisVO>();
+            LOGGER.log(Level.SEVERE, "Error consultarPaises PaisService:" + e);
 
-		IPaisesDAO paisesDAO = new PaisesDAO();
+        }
 
-		boolean realizarInsert = true;
+        return listaPaises;
 
-		String respuesta ="";
+    }
 
-		int idEncontrado = 0;
+    @Override
+    public final String insertarPais(final PaisVO pais) {
 
-		try {
+        ArrayList<PaisVO> listaPaises = new ArrayList<>();
 
-			listaPaises = paisesDAO.consultarPaises();
+        IPaisesDAO paisesDAO = new PaisesDAO();
 
-			for(int i=0; i<listaPaises.size();i++) {
-				if(listaPaises.get(i).getNombre().equalsIgnoreCase(pais.getNombre())) {
+        boolean realizarInsert = true;
 
-					realizarInsert = false;
+        String respuesta = "";
 
-					idEncontrado = listaPaises.get(i).getId();
-				}
-			}
+        int idEncontrado = 0;
 
-			if (realizarInsert) {
+        try {
 
-				respuesta = paisesDAO.insertarPais(pais);
+            listaPaises = paisesDAO.consultarPaises();
 
-			}else {
+            for (int i = 0; i < listaPaises.size(); i++) {
+                if (listaPaises.get(i).getNombre().equalsIgnoreCase(pais.getNombre())) {
 
-				String status = "Disponible";
-				pais.setStatus(status);
-				pais.setId(idEncontrado);
-				respuesta = actualizarPais(pais);
-			}
-		} catch (Exception e) {
-			System.out.println("Error en insertarPais de PaisesService. Mensaje: "+e);
-		}
-		return respuesta;
-	}
+                    realizarInsert = false;
 
-	@Override
-	public PaisVO consultarPais(int id) {
-		// TODO Auto-generated method stub
+                    idEncontrado = listaPaises.get(i).getId();
+                }
+            }
 
-		PaisVO pais = new PaisVO();
+            if (realizarInsert) {
 
-		IPaisesDAO paisDAO = new PaisesDAO();
+                respuesta = paisesDAO.insertarPais(pais);
 
-		pais = paisDAO.consultarPais(id);
+            } else {
 
-		return pais;
-	}
+                String status = "Disponible";
+                pais.setStatus(status);
+                pais.setId(idEncontrado);
+                respuesta = actualizarPais(pais);
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error insertarPais PaisesService: " + e);
+        }
+        return respuesta;
+    }
 
-	@Override
-	public String actualizarPais(PaisVO pais) {
-		// TODO Auto-generated method stub
+    @Override
+    public final PaisVO consultarPais(final int id) throws SQLException {
 
-		ArrayList<PaisVO> listaPaises = new ArrayList<PaisVO>();
+        PaisVO pais = new PaisVO();
 
-		String respuesta = "";
+        IPaisesDAO paisDAO = new PaisesDAO();
 
-		IPaisesDAO paisDAO = new PaisesDAO();
+        pais = paisDAO.consultarPais(id);
 
-		boolean realizarUpdate= true;
+        return pais;
+    }
 
-		int idEncontrado = 0;
+    @Override
+    public final String actualizarPais(final PaisVO pais) {
 
-		try {
+        ArrayList<PaisVO> listaPaises = new ArrayList<>();
 
-			listaPaises = paisDAO.consultarPaises();
+        String respuesta = "";
 
-			for(int i=0; i<listaPaises.size();i++) {
-				if(listaPaises.get(i).getNombre().equalsIgnoreCase(pais.getNombre())) {
+        IPaisesDAO paisDAO = new PaisesDAO();
 
-					idEncontrado = listaPaises.get(i).getId();
+        boolean realizarUpdate = true;
 
-					realizarUpdate = false;
+        int idEncontrado = 0;
 
-					respuesta = "Pais ya existe.";
+        try {
 
-					if(pais.getId() == (idEncontrado)) {
-						if(listaPaises.get(i).getStatus().equals("Eliminado")) {
+            listaPaises = paisDAO.consultarPaises();
 
-							realizarUpdate = true;
+            for (int i = 0; i < listaPaises.size(); i++) {
+                if (listaPaises.get(i).getNombre().equalsIgnoreCase(pais.getNombre())) {
 
-							respuesta = "Pais ya existe. Actualizando estado a Disponible... ";
-						}
-					}
-				}
-			}
+                    idEncontrado = listaPaises.get(i).getId();
 
-			if (realizarUpdate) {
+                    realizarUpdate = false;
 
-				respuesta += paisDAO.actualizarPais(pais);
+                    respuesta = "Pais ya existe.";
 
-			}
+                    if (pais.getId() == (idEncontrado)) {
+                        if (listaPaises.get(i).getStatus().equals("Eliminado")) {
 
+                            realizarUpdate = true;
 
-		} catch (Exception e) {
-			System.out.println("Error en actualizarPais de PaisesService. Mensaje: " + e);
-		}
+                            respuesta = "Pais existe. Actualizando estado... ";
+                        }
+                    }
+                }
+            }
 
-		return respuesta;
-	}
+            if (realizarUpdate) {
 
-	@Override
-	public String eliminarPais(PaisVO pais) {
-		// TODO Auto-generated method stub
+                respuesta += paisDAO.actualizarPais(pais);
 
-		String respuesta ="";
+            }
 
-		IPaisesDAO paisDAO = new PaisesDAO();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error actualizarPais PaisesService: " + e);
+        }
 
-		try {
+        return respuesta;
+    }
 
-			respuesta = paisDAO.eliminarPais(pais);
+    @Override
+    public final String eliminarPais(final PaisVO pais) {
 
-		}catch(Exception e) {
-			System.out.println("Error en eliminarPais de PaisesService. Mensaje: "+e);
-		}
+        String respuesta = "";
 
-		return respuesta;
-	}
+        IPaisesDAO paisDAO = new PaisesDAO();
+
+        try {
+
+            respuesta = paisDAO.eliminarPais(pais);
+
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error eliminarPais PaisesService: " + e);
+        }
+
+        return respuesta;
+    }
 
 }

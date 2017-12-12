@@ -2,6 +2,8 @@ package main.servlets.admin;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,238 +17,339 @@ import main.services.interfaces.IPaisesService;
 import main.vo.PaisVO;
 
 /**
- * Servlet implementation class PaisesServlet
+ * Servlet implementation class PaisesServlet.
  */
 @WebServlet("/PaisesServlet")
 public class PaisesServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public PaisesServlet() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doPost(request, response);
-	}
+    private static final Logger LOGGER = Logger.getLogger("main.servlets.PaisesServlet");
+
+    private static final String ERROR = "{0}";
+
+    private static final String ID_PAIS = "id_pais";
+
+    private static final String RESPUESTA = "respuesta";
+
+    private static final String NOMBRE = "nombre";
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public PaisesServlet() {
+        super();
+    }
+
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    @Override
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            doPost(request, response);
+        } catch (ServletException e) {
+            LOGGER.log(Level.SEVERE, ERROR, e);
+        }
+    }
+
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    @Override
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String opcion = request.getParameter("opcion");
+
+        LOGGER.log(Level.INFO, "Opcion: {0}", opcion);
+
+        if (opcion.equals("verPaises")) {
+
+            try {
+                verPaises(request, response);
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, ERROR, e);
+            }
+        } else if (opcion.equals("crear")) {
+
+            try {
+                inicioCrearPais(request, response, opcion);
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, ERROR, e);
+            }
+        } else if (opcion.equals("insertar")) {
+
+            try {
+                insertarPais(request, response);
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, ERROR, e);
+            }
+        } else if (opcion.equals("modificar")) {
+
+            try {
+                inicioModificarPais(request, response, opcion);
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, ERROR, e);
+            }
+        } else if (opcion.equals("actualizar")) {
+
+            try {
+                acualizarPais(request, response);
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, ERROR, e);
+            }
+        } else if (opcion.equals("eliminar")) {
+
+            try {
+                eliminarPais(request, response);
+
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, ERROR, e);
+            }
+        }
+    }
+
+    /**
+     *
+     * @param request
+     *            Proporciona informacion request para servlets HTTP
+     * @param response
+     *            Provee funcionalidad especifica de HTTP
+     * @throws IOException
+     *             si hay operaciones I/O fallidas
+     * @throws ServletException
+     *             cuando el servlet encuentra dificultades
+     */
+    private void verPaises(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+        ArrayList<PaisVO> listaPaises = new ArrayList<>();
 
-		String opcion = request.getParameter("opcion");
+        IPaisesService paisesService = new PaisesService();
 
-		System.out.println("Opcion: " + opcion);
+        try {
 
-		if (opcion.equals("verPaises")){
+            listaPaises = paisesService.listarPaises();
 
-			try {
-				verPaises(request, response);
-			}catch(Exception e) {
-				System.out.println("Error en metodo verPaises. Mensaje: "+e);
-			}
-		}else if(opcion.equals("crear")){
+            request.setAttribute("listaPaises", listaPaises);
 
-			try {
-				inicioCrearPais(request, response, opcion);
-			}catch(Exception e) {
-				System.out.println("Error en metodo inicioCrearPais. Mensaje: "+e);
-			}
-		}else if(opcion.equals("insertar")) {
+        } catch (Exception e) {
 
-			try {
-				insertarPais(request, response);
-			}catch(Exception e) {
-				System.out.println("Error en metodo insertarPais. Mensaje: "+e);
-			}
-		}else if(opcion.equals("modificar")) {
+            LOGGER.log(Level.SEVERE, ERROR, e);
 
-			try {
-				inicioModificarPais(request, response, opcion);
-			}catch(Exception e) {
-				System.out.println("Error en metodo inicioModificarPais. Mensaje: "+e);
-			}
-		}else if(opcion.equals("actualizar")) {
+        } finally {
 
-			try {
-				acualizarPais(request, response);
-			}catch(Exception e) {
-				System.out.println("Error en metodo acualizarPais. Mensaje: "+e);
-			}
-		}else if(opcion.equals("eliminar")) {
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/admin/paises/listaPaises.jsp");
+            rd.forward(request, response);
 
-			try {
-				eliminarPais(request, response);
+        }
+    }
 
-			}catch(Exception e) {
-				System.out.println("Error en metodo eliminarPais. Mensaje: "+e);
-			}
-		}
-	}
+    /**
+     *
+     * @param request
+     *            Proporciona informacion request para servlets HTTP
+     * @param response
+     *            Provee funcionalidad especifica de HTTP
+     * @param opcion
+     *            Indica que accion se realizará
+     * @throws IOException
+     *             si hay operaciones I/O fallidas
+     * @throws ServletException
+     *             cuando el servlet encuentra dificultades
+     */
+    private void inicioCrearPais(final HttpServletRequest request, final HttpServletResponse response,
+            final String opcion) throws ServletException, IOException {
 
-	private void verPaises(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		// TODO Auto-generated method stub
+        try {
 
-		ArrayList<PaisVO> listaPaises = new ArrayList<PaisVO>();
+            request.setAttribute("accion", opcion);
 
-		IPaisesService paisesService = new PaisesService();
+        } catch (Exception e) {
 
-		try {
+            LOGGER.log(Level.SEVERE, ERROR, e);
 
-			listaPaises = paisesService.listarPaises();
+        } finally {
 
-			request.setAttribute("listaPaises", listaPaises);
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/admin/paises/inicioPais.jsp");
+            rd.forward(request, response);
 
-		}catch(Exception e) {
+        }
+    }
 
-			System.out.println("Error en verPaises de PaisesServlet. Mensaje: " + e);
+    /**
+     *
+     * @param request
+     *            Proporciona informacion request para servlets HTTP
+     * @param response
+     *            Provee funcionalidad especifica de HTTP
+     * @throws IOException
+     *             si hay operaciones I/O fallidas
+     * @throws ServletException
+     *             cuando el servlet encuentra dificultades
+     */
+    private void insertarPais(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
 
+        String nombre = request.getParameter(NOMBRE);
+        String status = "Disponible";
+        String respuesta = "";
 
-		}finally {
+        PaisVO pais = new PaisVO();
+        IPaisesService paisService = new PaisesService();
 
-			RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/admin/paises/listaPaises.jsp");
-			rd.forward(request, response);
+        pais.setNombre(nombre);
+        pais.setStatus(status);
 
-		}
-	}
+        try {
 
-	private void inicioCrearPais(HttpServletRequest request, HttpServletResponse response, String opcion) throws Exception {
-		// TODO Auto-generated method stub
+            respuesta = paisService.insertarPais(pais);
+            request.setAttribute(RESPUESTA, respuesta);
 
-		try {
+        } catch (Exception e) {
 
-			request.setAttribute("accion",opcion);
+            LOGGER.log(Level.SEVERE, ERROR, e);
 
-		}catch(Exception e) {
+        } finally {
 
-			System.out.println("Error en inicioCrearPais de PaisesServlet. Mensaje: " + e);
+            verPaises(request, response);
 
-		}finally {
+        }
 
-			RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/admin/paises/inicioPais.jsp");
-			rd.forward(request, response);
+    }
 
-		}
-	}
+    /**
+     *
+     * @param request
+     *            Proporciona informacion request para servlets HTTP
+     * @param response
+     *            Provee funcionalidad especifica de HTTP
+     * @param opcion
+     *            Indica que accion se realizará
+     * @throws IOException
+     *             si hay operaciones I/O fallidas
+     * @throws ServletException
+     *             cuando el servlet encuentra dificultades
+     */
+    private void inicioModificarPais(final HttpServletRequest request, final HttpServletResponse response,
+            final String opcion) throws ServletException, IOException {
 
-	private void insertarPais(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		// TODO Auto-generated method stub
+        try {
 
-		String nombre = request.getParameter("nombre");
-		String status = "Disponible";
-		String respuesta = "";
+            request.setAttribute("accion", opcion);
 
-		PaisVO pais = new PaisVO();
-		IPaisesService paisService = new PaisesService();
+            int id = Integer.parseInt(request.getParameter(ID_PAIS));
 
-		pais.setNombre(nombre);
-		pais.setStatus(status);
+            PaisVO pais = new PaisVO();
+            IPaisesService paisService = new PaisesService();
 
-		try {
+            pais = paisService.consultarPais(id);
 
-			respuesta = paisService.insertarPais(pais);
-			request.setAttribute("respuesta", respuesta);
+            request.setAttribute(ID_PAIS, id);
+            request.setAttribute(NOMBRE, pais.getNombre());
 
-		} catch (Exception e) {
-			System.out.println("Error en insertarPais de PaisesServlet. Mesaje: " + e);
-		}finally {
-			verPaises(request, response);
-		}
+        } catch (Exception e) {
 
-	}
+            LOGGER.log(Level.SEVERE, ERROR, e);
 
-	private void inicioModificarPais(HttpServletRequest request, HttpServletResponse response, String opcion) throws Exception{
-		// TODO Auto-generated method stub
+        } finally {
 
-		try {
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/admin/paises/inicioPais.jsp");
+            rd.forward(request, response);
 
-			request.setAttribute("accion", opcion);
+        }
 
-			int id = Integer.parseInt(request.getParameter("id_pais"));
+    }
 
-			PaisVO pais = new PaisVO();
-			IPaisesService paisService = new PaisesService();
+    /**
+     *
+     * @param request
+     *            Proporciona informacion request para servlets HTTP
+     * @param response
+     *            Provee funcionalidad especifica de HTTP
+     * @throws IOException
+     *             si hay operaciones I/O fallidas
+     * @throws ServletException
+     *             cuando el servlet encuentra dificultades
+     */
+    private void acualizarPais(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
 
-			pais = paisService.consultarPais(id);
+        int id = Integer.parseInt(request.getParameter(ID_PAIS));
+        String nombre = request.getParameter(NOMBRE);
+        String status = "Disponible";
 
-			request.setAttribute("id_pais", id);
-			request.setAttribute("nombre", pais.getNombre());
+        String respuesta = "";
 
-		} catch (Exception e) {
-			System.out.println("Error en inicioModificarPais de PaisesServlet. Mensaje: " + e);
-		} finally {
+        PaisVO pais = new PaisVO();
+        IPaisesService paisService = new PaisesService();
 
-			RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/admin/paises/inicioPais.jsp");
-			rd.forward(request, response);
-		}
+        pais.setId(id);
+        pais.setNombre(nombre);
+        pais.setStatus(status);
 
-	}
+        try {
 
-	private void acualizarPais(HttpServletRequest request, HttpServletResponse response) throws Exception{
-		// TODO Auto-generated method stub
+            respuesta = paisService.actualizarPais(pais);
 
-		int id = Integer.parseInt(request.getParameter("id_pais"));
-		String nombre = request.getParameter("nombre");
-		String status = "Disponible";
+            request.setAttribute(RESPUESTA, respuesta);
 
-		String respuesta = "";
+        } catch (Exception e) {
 
-		PaisVO pais = new PaisVO();
-		IPaisesService paisService = new PaisesService();
+            LOGGER.log(Level.SEVERE, ERROR, e);
 
-		pais.setId(id);
-		pais.setNombre(nombre);
-		pais.setStatus(status);
+        } finally {
 
-		try {
+            verPaises(request, response);
 
-			respuesta = paisService.actualizarPais(pais);
+        }
+    }
 
-			request.setAttribute("respuesta", respuesta);
+    /**
+     *
+     * @param request
+     *            Proporciona informacion request para servlets HTTP
+     * @param response
+     *            Provee funcionalidad especifica de HTTP
+     * @throws IOException
+     *             si hay operaciones I/O fallidas
+     * @throws ServletException
+     *             cuando el servlet encuentra dificultades
+     */
+    private void eliminarPais(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
 
-		} catch (Exception e) {
-			System.out.println("Error en acualizarPais de PaisesServlet. Mensaje: " + e);
-		}finally {
-			verPaises(request, response);
-		}
-	}
+        int id = Integer.parseInt(request.getParameter(ID_PAIS));
 
-	private void eliminarPais(HttpServletRequest request, HttpServletResponse response) throws Exception{
-		// TODO Auto-generated method stub
+        String status = "Eliminado";
 
-		int id = Integer.parseInt(request.getParameter("id_pais"));
+        String respuesta = "";
 
-		String status = "Eliminado";
+        PaisVO pais = new PaisVO();
+        IPaisesService paisService = new PaisesService();
 
-		String respuesta = "";
+        pais.setId(id);
+        pais.setStatus(status);
 
-		PaisVO pais = new PaisVO();
-		IPaisesService paisService = new PaisesService();
+        try {
 
-		pais.setId(id);
-		pais.setStatus(status);
+            respuesta = paisService.eliminarPais(pais);
 
-		try {
+            request.setAttribute(RESPUESTA, respuesta);
 
-			respuesta = paisService.eliminarPais(pais);
+        } catch (Exception e) {
 
-			request.setAttribute("respuesta", respuesta);
-		}catch(Exception e) {
-			System.out.println("Error en eliminarPais de PaisesServlet. Mensaje: " + e);
-		}finally {
-			verPaises(request, response);
-		}
-	}
+            LOGGER.log(Level.SEVERE, ERROR, e);
+
+        } finally {
+
+            verPaises(request, response);
+
+        }
+    }
 
 }
